@@ -1,0 +1,31 @@
+# Managed by Ansible - do not edit manually
+
+# Local domain
+domain={{ dns_domain }}
+local=/{{ dns_domain }}/
+expand-hosts
+
+# Upstream DNS for non-local queries
+server={{ dns_upstream }}
+
+# Don't read /etc/resolv.conf
+no-resolv
+
+# Listen on all interfaces (or specific interface if set)
+{% if dns_listen_interface %}
+interface={{ dns_listen_interface }}
+{% else %}
+listen-address=0.0.0.0
+{% endif %}
+
+# Additional hosts file for local entries
+addn-hosts=/etc/dnsmasq.d/hosts.{{ dns_domain }}
+
+# Cache size
+cache-size=1000
+
+# Don't forward plain names (without dots)
+domain-needed
+
+# Don't forward addresses in non-routed spaces
+bogus-priv

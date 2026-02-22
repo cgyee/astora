@@ -1,0 +1,6 @@
+# Managed by Ansible - do not edit manually
+# Local DNS entries for {{ dns_domain }}
+
+{% for host in dns_hosts %}
+{{ host.ip }}    {{ host.hostname }}
+{% endfor %}

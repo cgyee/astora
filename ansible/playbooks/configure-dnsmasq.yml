@@ -1,0 +1,7 @@
+---
+- name: Configure dnsmasq DNS server
+  hosts: dns_servers
+  become: true
+
+  roles:
+    - dnsmasq
