@@ -1,0 +1,17 @@
+# OpenTofu / Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.auto.tfvars
+
+# Packer
+*.auto.pkrvars.hcl
+packer/*/output/
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
