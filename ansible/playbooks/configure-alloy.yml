@@ -1,0 +1,7 @@
+---
+- name: Configure Grafana Alloy log collection
+  hosts: alloy_servers
+  become: true
+
+  roles:
+    - alloy_config

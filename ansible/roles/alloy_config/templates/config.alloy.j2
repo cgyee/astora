@@ -1,0 +1,36 @@
+// Managed by Ansible - do not edit manually
+
+// Read from systemd journal
+loki.source.journal "systemd" {
+  forward_to    = [loki.write.default.receiver]
+  relabel_rules = loki.relabel.journal.rules
+  path          = "{{ alloy_positions_dir }}/journal.pos"
+}
+
+// Extract and normalize labels
+loki.relabel "journal" {
+  forward_to = []
+
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "hostname"
+  }
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "priority"
+  }
+}
+
+// Send to Loki
+loki.write "default" {
+  endpoint {
+    url = "{{ loki_endpoint }}"
+  }
+  external_labels = {
+    job = "{{ alloy_job_name }}",
+  }
+}

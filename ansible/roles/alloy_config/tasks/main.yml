@@ -1,0 +1,23 @@
+---
+- name: Ensure alloy positions directory exists
+  ansible.builtin.file:
+    path: "{{ alloy_positions_dir }}"
+    state: directory
+    owner: alloy
+    group: alloy
+    mode: "0755"
+
+- name: Deploy alloy configuration
+  ansible.builtin.template:
+    src: config.alloy.j2
+    dest: /etc/alloy/config.alloy
+    owner: root
+    group: alloy
+    mode: "0644"
+  notify: Restart alloy
+
+- name: Ensure alloy service is enabled and running
+  ansible.builtin.systemd:
+    name: alloy
+    enabled: true
+    state: started

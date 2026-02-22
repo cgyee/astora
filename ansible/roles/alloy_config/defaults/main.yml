@@ -1,0 +1,9 @@
+---
+# Loki endpoint for log shipping
+loki_endpoint: "http://leader.lab.local:3100/loki/api/v1/push"
+
+# Position file location for journal deduplication
+alloy_positions_dir: "/var/lib/alloy/positions"
+
+# Job label for logs
+alloy_job_name: "systemd-journal"
