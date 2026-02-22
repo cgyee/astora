@@ -13,10 +13,18 @@ provider "libvirt" {
 
 variable "vms" {
   default = {
-    bastion-vm = { mac = "52:54:00:11:22:33", memory = 2097152, vcpu = 2  }
-    general-vm-1 = { mac = "52:54:00:11:22:44", memory = 2097152, vcpu = 2 }
-    general-vm-2 = { mac = "52:54:00:11:22:55", memory = 2097152, vcpu = 2 }
-    general-vm-3 = { mac = "52:54:00:11:22:55", memory = 2097152, vcpu = 2 }
+    leader       = { mac = "52:54:00:11:22:00", memory = 4194304, vcpu = 2, base_image = "debian-grafana", static_ip = "192.168.173.50" }
+    bastion-vm   = { mac = "52:54:00:11:22:33", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
+    general-vm-1 = { mac = "52:54:00:11:22:44", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
+    general-vm-2 = { mac = "52:54:00:11:22:55", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
+    general-vm-3 = { mac = "52:54:00:11:22:66", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
+  }
+}
+
+variable "network" {
+  default = {
+    gateway    = "192.168.173.1"
+    dns_server = "192.168.173.1"
   }
 }
 
@@ -44,7 +52,7 @@ resource "libvirt_volume" "vm_disk" {
   }
 
   backing_store = {
-    path = "/var/lib/libvirt/images/debian-docker.qcow2"
+    path = "/var/lib/libvirt/images/${each.value.base_image}.qcow2"
     format = {
       type = "qcow2"
     }
@@ -65,7 +73,11 @@ resource "libvirt_cloudinit_disk" "init" {
     hostname = each.key
   })
 
-  network_config = file("${path.module}/cloud-init/network-config.yaml")
+  network_config = templatefile("${path.module}/cloud-init/network-config.yaml.tpl", {
+    static_ip  = each.value.static_ip
+    gateway    = var.network.gateway
+    dns_server = var.network.dns_server
+  })
 }
 
 # Cloud-init volumes (ISO from cloudinit_disk)
