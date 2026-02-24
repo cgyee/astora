@@ -1,9 +1,14 @@
 ---
+- name: Stop dnsmasq if running (to avoid port conflicts)
+  ansible.builtin.systemd:
+    name: dnsmasq
+    state: stopped
+  ignore_errors: true
+
 - name: Install dnsmasq
   ansible.builtin.apt:
     name: dnsmasq
     state: present
-    update_cache: true
 
 - name: Disable systemd-resolved (conflicts with dnsmasq)
   ansible.builtin.systemd:
@@ -12,6 +17,22 @@
     enabled: false
   ignore_errors: true
 
+- name: Remove systemd-resolved resolv.conf symlink
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Configure resolv.conf to use local dnsmasq
+  ansible.builtin.copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver 127.0.0.1
+      nameserver {{ dns_upstream }}
+      search {{ dns_domain }}
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Deploy dnsmasq configuration
   ansible.builtin.template:
     src: dnsmasq.conf.j2
@@ -19,24 +40,40 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Restart dnsmasq
 
-- name: Ensure dnsmasq.d directory exists
+- name: Deploy local hosts file
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts.{{ dns_domain }}
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create systemd override directory
   ansible.builtin.file:
-    path: /etc/dnsmasq.d
+    path: /etc/systemd/system/dnsmasq.service.d
     state: directory
     owner: root
     group: root
     mode: "0755"
 
-- name: Deploy local hosts file
-  ansible.builtin.template:
-    src: hosts.j2
-    dest: /etc/dnsmasq.d/hosts.{{ dns_domain }}
+- name: Deploy systemd override to bypass Debian helper
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/dnsmasq.service.d/override.conf
+    content: |
+      [Service]
+      Type=simple
+      ExecStartPre=
+      ExecStart=
+      ExecStart=/usr/sbin/dnsmasq -k --conf-file=/etc/dnsmasq.conf
+      ExecStartPost=
     owner: root
     group: root
     mode: "0644"
-  notify: Restart dnsmasq
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Ensure dnsmasq service is enabled and running
   ansible.builtin.systemd:

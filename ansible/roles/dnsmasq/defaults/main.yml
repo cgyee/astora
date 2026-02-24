@@ -5,8 +5,8 @@ dns_domain: "lab.local"
 # Upstream DNS server (for non-local queries)
 dns_upstream: "192.168.173.1"
 
-# Interface to listen on (empty = all interfaces)
-dns_listen_interface: ""
+# IP address of this DNS server (for listening)
+dns_server_ip: "192.168.173.50"
 
 # Local hosts to register for DNS resolution
 dns_hosts:

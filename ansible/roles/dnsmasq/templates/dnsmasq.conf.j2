@@ -11,15 +11,13 @@ server={{ dns_upstream }}
 # Don't read /etc/resolv.conf
 no-resolv
 
-# Listen on all interfaces (or specific interface if set)
-{% if dns_listen_interface %}
-interface={{ dns_listen_interface }}
-{% else %}
-listen-address=0.0.0.0
-{% endif %}
+# Listen on localhost and the server's IP
+listen-address=127.0.0.1
+listen-address={{ dns_server_ip }}
+bind-interfaces
 
 # Additional hosts file for local entries
-addn-hosts=/etc/dnsmasq.d/hosts.{{ dns_domain }}
+addn-hosts=/etc/hosts.{{ dns_domain }}
 
 # Cache size
 cache-size=1000
