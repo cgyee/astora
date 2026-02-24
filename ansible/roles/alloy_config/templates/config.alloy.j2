@@ -4,7 +4,6 @@
 loki.source.journal "systemd" {
   forward_to    = [loki.write.default.receiver]
   relabel_rules = loki.relabel.journal.rules
-  path          = "{{ alloy_positions_dir }}/journal.pos"
 }
 
 // Extract and normalize labels
