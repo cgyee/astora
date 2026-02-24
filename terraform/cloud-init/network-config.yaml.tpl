@@ -10,4 +10,9 @@ ethernets:
       search: [lab.local]
 %{ else ~}
     dhcp4: true
+    dhcp4-overrides:
+      use-dns: false
+    nameservers:
+      addresses: [${dns_server}]
+      search: [lab.local]
 %{ endif ~}

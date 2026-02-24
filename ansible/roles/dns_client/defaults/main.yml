@@ -1,0 +1,9 @@
+---
+# Primary DNS server (leader)
+dns_server_ip: "192.168.173.50"
+
+# Fallback DNS (router)
+dns_fallback: "192.168.173.1"
+
+# Search domain
+dns_domain: "lab.local"

@@ -24,7 +24,7 @@ variable "vms" {
 variable "network" {
   default = {
     gateway    = "192.168.173.1"
-    dns_server = "192.168.173.1"
+    dns_server = "192.168.173.50"  # leader
   }
 }
 

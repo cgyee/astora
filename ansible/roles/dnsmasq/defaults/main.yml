@@ -12,6 +12,11 @@ dns_server_ip: "192.168.173.50"
 dns_hosts:
   - hostname: leader
     ip: 192.168.173.50
-  # Add more hosts as needed:
-  # - hostname: bastion-vm
-  #   ip: 192.168.173.51
+  - hostname: bastion-vm
+    ip: 192.168.173.183
+  - hostname: general-vm-1
+    ip: 192.168.173.193
+  - hostname: general-vm-2
+    ip: 192.168.173.104
+  - hostname: general-vm-3
+    ip: 192.168.173.115

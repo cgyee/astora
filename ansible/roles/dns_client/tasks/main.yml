@@ -1,0 +1,23 @@
+---
+- name: Disable systemd-resolved if present
+  ansible.builtin.systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Remove existing resolv.conf
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Configure resolv.conf to use leader DNS
+  ansible.builtin.copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver {{ dns_server_ip }}
+      nameserver {{ dns_fallback }}
+      search {{ dns_domain }}
+    owner: root
+    group: root
+    mode: "0644"

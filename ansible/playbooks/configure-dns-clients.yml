@@ -1,0 +1,7 @@
+---
+- name: Configure VMs to use leader as DNS server
+  hosts: dns_clients
+  become: true
+
+  roles:
+    - dns_client
