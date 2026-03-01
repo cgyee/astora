@@ -1,0 +1,4 @@
+# Ansible-lint configuration
+skip_list:
+  - var-naming[no-role-prefix]  # Role variable prefix requirement is overkill for homelab
+  - ignore-errors               # ignore_errors is fine for optional service stops
