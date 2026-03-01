@@ -86,11 +86,24 @@ packer {
       destination = "/tmp/docker-compose.yaml"
     }
 
+    provisioner "file" {
+      source      = "./provisioning"
+      destination = "/tmp/provisioning"
+    }
+
+    provisioner "file" {
+      source      = "./dashboards"
+      destination = "/tmp/dashboards"
+    }
+
     provisioner "shell" {
       inline = [
         "sudo mkdir -p /grafana",
         "sudo mv /tmp/docker-compose.yaml /grafana/docker-compose.yaml",
-        "sudo chmod 644 /grafana/docker-compose.yaml" # Set appropriate permissions
+        "sudo mv /tmp/provisioning /grafana/provisioning",
+        "sudo mv /tmp/dashboards /grafana/dashboards",
+        "sudo chmod -R 644 /grafana/*.yaml /grafana/provisioning/* /grafana/dashboards/*",
+        "sudo chmod 755 /grafana /grafana/provisioning /grafana/provisioning/dashboards /grafana/dashboards"
       ]
     }
 

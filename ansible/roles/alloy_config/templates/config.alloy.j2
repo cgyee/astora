@@ -33,3 +33,26 @@ loki.write "default" {
     job = "{{ alloy_job_name }}",
   }
 }
+
+// ============================================
+// Metrics Collection
+// ============================================
+
+// Expose node metrics (CPU, memory, disk, network, etc.)
+prometheus.exporter.unix "node" {
+}
+
+// Scrape node metrics
+prometheus.scrape "node" {
+  targets         = prometheus.exporter.unix.node.targets
+  forward_to      = [prometheus.remote_write.default.receiver]
+  scrape_interval = "{{ metrics_scrape_interval }}"
+  job_name        = "node"
+}
+
+// Send metrics to Prometheus
+prometheus.remote_write "default" {
+  endpoint {
+    url = "{{ prometheus_endpoint }}"
+  }
+}

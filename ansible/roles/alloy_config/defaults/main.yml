@@ -4,3 +4,9 @@ loki_endpoint: "http://leader.lab.local:3100/loki/api/v1/push"
 
 # Job label for logs
 alloy_job_name: "systemd-journal"
+
+# Prometheus endpoint for metrics
+prometheus_endpoint: "http://leader.lab.local:9090/api/v1/write"
+
+# Metrics scrape interval
+metrics_scrape_interval: "15s"
