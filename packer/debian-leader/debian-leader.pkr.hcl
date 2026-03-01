@@ -104,10 +104,16 @@ packer {
       destination = "/tmp/dashboards"
     }
 
+    provisioner "file" {
+      source      = "./loki-config.yaml"
+      destination = "/tmp/loki-config.yaml"
+    }
+
     provisioner "shell" {
       inline = [
         "sudo mkdir -p /grafana",
         "sudo mv /tmp/docker-compose.yaml /grafana/docker-compose.yaml",
+        "sudo mv /tmp/loki-config.yaml /grafana/loki-config.yaml",
         "sudo mv /tmp/provisioning /grafana/provisioning",
         "sudo mv /tmp/dashboards /grafana/dashboards",
         "sudo chmod -R 644 /grafana/*.yaml /grafana/provisioning/* /grafana/dashboards/*",

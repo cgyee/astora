@@ -5,6 +5,9 @@ services:
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
     restart: unless-stopped
 
   prometheus:
@@ -14,6 +17,8 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
     restart: unless-stopped
 
   grafana:
@@ -55,3 +60,7 @@ services:
         EOF
         /run.sh
     restart: unless-stopped
+
+volumes:
+  loki-data:
+  prometheus-data:
