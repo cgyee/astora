@@ -1,0 +1,75 @@
+name: Validate Infrastructure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ansible-lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ansible-lint
+        run: pip install ansible-lint
+
+      - name: Run ansible-lint
+        working-directory: ansible
+        run: ansible-lint
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Check formatting
+        working-directory: terraform
+        run: tofu fmt -check -recursive
+
+      - name: Initialize
+        working-directory: terraform
+        run: tofu init -backend=false
+
+      - name: Validate
+        working-directory: terraform
+        run: tofu validate
+
+  packer-validate:
+    name: Packer Validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        template:
+          - debian-docker
+          - debian-alloy
+          - debian-grafana
+          - debian-leader
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Check formatting
+        working-directory: packer/${{ matrix.template }}
+        run: packer fmt -check .
+
+      - name: Initialize
+        working-directory: packer/${{ matrix.template }}
+        run: packer init .
+
+      - name: Validate
+        working-directory: packer/${{ matrix.template }}
+        run: packer validate -syntax-only .
