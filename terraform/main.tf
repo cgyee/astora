@@ -13,7 +13,7 @@ provider "libvirt" {
 
 variable "vms" {
   default = {
-    leader       = { mac = "52:54:00:11:22:00", memory = 4194304, vcpu = 2, base_image = "debian-grafana", static_ip = "192.168.173.50" }
+    leader       = { mac = "52:54:00:11:22:00", memory = 4194304, vcpu = 2, base_image = "debian-leader", static_ip = "192.168.173.50" }
     bastion-vm   = { mac = "52:54:00:11:22:33", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
     general-vm-1 = { mac = "52:54:00:11:22:44", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
     general-vm-2 = { mac = "52:54:00:11:22:55", memory = 2097152, vcpu = 2, base_image = "debian-docker", static_ip = "" }
